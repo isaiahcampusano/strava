@@ -54,7 +54,7 @@
             </div>
           </div>
           <nav class="group-tabs" aria-label="Group sections">
-            <button type="button" data-action="toast" data-toast="Not included in this prototype">Active</button><button type="button" data-action="toast" data-toast="Not included in this prototype">Challenges</button><button class="active" type="button" data-action="toast" data-toast="Not included in this prototype">Clubs</button>
+            <button type="button" data-action="select-tab" data-toast="Not included in this prototype">Active</button><button type="button" data-action="select-tab" data-toast="Not included in this prototype">Challenges</button><button class="active" type="button" data-action="select-tab" data-toast="Not included in this prototype">Clubs</button>
           </nav>
           <div class="screen-scroll club-list-scroll">
             <div class="create-club"><span>Create your own Strava club</span><button type="button" data-action="toast" data-toast="Not included in this prototype">Create a Club</button></div>
@@ -160,18 +160,18 @@
               <div class="summary-stats"><span><b>2</b> shared runs</span><span><b>12</b> members paired</span></div>
               <div class="streak-note"><span class="check-circle"><svg><use href="#i-check"/></svg></span><span>Complete both runs to add to this week's club progress.</span></div>
             </section>
-            <section class="partner-section">
-              <div class="section-heading"><div><span>Suggested partner</span><h3 class="partner-name">Maya L.</h3></div><span class="match-pill">Best match</span></div>
+            <section class="partner-section" data-partner-section>
+              <div class="section-heading"><div><span>Suggested partner</span><h3 class="partner-name" data-partner-name>Maya L.</h3></div><span class="match-pill">Best match</span></div>
               <div class="partner-row">
-                <span class="avatar avatar-maya">ML</span>
-                <div><strong class="partner-name-inline">Maya L.</strong><span class="partner-meta">Usually runs Tue / Thu</span></div>
+                <span class="avatar avatar-maya" data-partner-avatar>ML</span>
+                <div><strong class="partner-name-inline" data-partner-name-inline>Maya L.</strong><span class="partner-meta" data-partner-meta>Usually runs Tue / Thu</span></div>
               </div>
-              <ul class="match-reasons">
+              <ul class="match-reasons" data-match-reasons>
                 <li><svg><use href="#i-run"/></svg><span>8:40&ndash;9:00 /mi pace</span></li>
                 <li><svg><use href="#i-calendar"/></svg><span>Same Tuesday and Thursday availability</span></li>
                 <li><svg><use href="#i-map"/></svg><span>Often runs the North Quad loop</span></li>
               </ul>
-              <button class="primary-button" type="button" data-action="pair-with-maya" data-next="3">Pair with Maya</button>
+              <button class="primary-button" type="button" data-action="pair-with-partner" data-next="3" data-partner-cta>Pair with Maya</button>
               <button class="text-button" type="button" data-action="toggle-alternate" aria-pressed="false">See other clubmates</button>
             </section>
             <section class="how-it-works"><h3>How it works</h3><p>Your runs can be recorded together or matched after both activities are uploaded.</p></section>
@@ -192,6 +192,7 @@
             <h1>Club Activity Feed</h1><span></span>
           </div>
           <div class="screen-scroll activity-feed-scroll">
+            <div class="time-marker" data-time-marker>Later this week</div>
             <div class="progress-update"><span class="check-circle"><svg><use href="#i-check"/></svg></span><div><strong class="progress-title">Shared run progress</strong><span class="progress-copy">Complete both runs to add to this week's club progress.</span></div></div>
             <article class="feed-activity">
               <div class="athlete-row"><span class="avatar avatar-ellen">EP</span><div><strong>Ellen Powell</strong><span>Today &middot; Garmin Forerunner 265S</span><span class="location-line"><svg><use href="#i-run"/></svg> North Quad campus loop</span></div></div>
@@ -201,8 +202,8 @@
                 <svg class="route-line" viewBox="0 0 390 220" aria-hidden="true"><path d="M76 40 105 73 98 106 162 125 214 113 259 146 304 134 329 170 297 193"/><circle cx="76" cy="40" r="5"/><circle class="finish" cx="297" cy="193" r="6"/></svg>
               </button>
               <div class="challenge-context"><span class="orange-dot"></span><div><strong>Weekly challenge</strong><span class="challenge-context-copy">Shared runs add to this week's club progress.</span></div></div>
-              <div class="kudos-line"><span class="avatar-stack"><i>EP</i><i>ML</i><i>JR</i></span><span class="kudos-count">8 gave kudos</span></div>
-              <div class="feed-actions"><button type="button" data-action="toggle-feed-kudos" aria-pressed="false" aria-label="Give kudos to Ellen and Maya"><svg><use href="#i-kudos"/></svg></button><button type="button" data-action="toast" data-toast="Not included in this prototype" aria-label="Comment"><svg><use href="#i-comment"/></svg></button><button type="button" data-action="toast" data-toast="Not included in this prototype" aria-label="Share"><svg><use href="#i-share"/></svg></button></div>
+              <div class="kudos-line"><span class="avatar-stack"><i>EP</i><i data-partner-initial>ML</i><i>JR</i></span><span class="kudos-count">8 gave kudos</span></div>
+              <div class="feed-actions"><button type="button" data-action="toggle-feed-kudos" aria-pressed="false" aria-label="Give kudos"><svg><use href="#i-kudos"/></svg></button><button type="button" data-action="toast" data-toast="Not included in this prototype" aria-label="Comment"><svg><use href="#i-comment"/></svg></button><button type="button" data-action="toast" data-toast="Not included in this prototype" aria-label="Share"><svg><use href="#i-share"/></svg></button></div>
               <button class="view-activity" data-next="4">View activity</button>
             </article>
           </div>
@@ -235,7 +236,7 @@
               </div>
               <section class="activity-challenge">
                 <span class="check-circle"><svg><use href="#i-check"/></svg></span>
-                <div><strong>Weekly challenge complete</strong><span>Ellen and Maya completed 2 of 2 shared runs. North Quad Run Club is now 68% complete.</span></div>
+                <div><strong data-partner-kicker>Weekly challenge complete</strong><span data-partner-detail>Ellen and <span data-partner-display>Maya L.</span> completed 2 of 2 shared runs. North Quad Run Club is now 68% complete.</span></div>
               </section>
               <div class="gear-list">
                 <div><svg><use href="#i-shoe"/></svg><span>ASICS Superblast</span></div>
@@ -246,6 +247,7 @@
             </article>
           </div>
         </section>
+        <div class="prototype-toast" role="status" aria-live="polite" aria-atomic="true"></div>
       </div>
     </section>
 
@@ -255,7 +257,6 @@
     </div>
   </main>
 
-  <div class="prototype-toast" role="status" aria-live="polite" aria-atomic="true"></div>
   <script src="script.js"></script>
 </body>
 </html>

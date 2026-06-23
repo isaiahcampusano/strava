@@ -1431,9 +1431,9 @@ button.club-row:active {
 }
 
 .prototype-toast {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
+  position: absolute;
+  left: 50%;
+  bottom: 80px;
   z-index: 30;
   max-width: min(280px, calc(100vw - 24px));
   padding: 10px 12px;
@@ -1442,10 +1442,23 @@ button.club-row:active {
   color: #fff;
   font-size: 12px;
   font-weight: 700;
+  text-align: center;
   opacity: 0;
-  transform: translateY(6px);
+  transform: translate(-50%, 6px);
   pointer-events: none;
   transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.time-marker {
+  margin: 0;
+  padding: 7px 18px;
+  background: #0d0d0d;
+  color: #b3b3b3;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #1f1f1f;
 }
 
 .prototype-toast.is-visible {
