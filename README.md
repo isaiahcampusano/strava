@@ -18,4 +18,5 @@ Use the on-screen actions or the left/right arrow keys to move through the flow.
 - `COPILOT_HANDOFF.md` - next-pass interaction and incentive requirements
 - `COPILOT_SECOND_PASS.md` - prior-state fix brief and historical context
 - `COPILOT_THIRD_PASS.md` - current source-of-truth handoff for the presentation-polish pass
+- `verify.js` - jsdom verification harness for the second-pass baseline
 - `walkthrough-script.md` - short demo talk track

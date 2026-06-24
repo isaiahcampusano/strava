@@ -11,7 +11,7 @@ This is a content-and-realism pass, not a redesign or architecture pass.
 - This workspace is still a static prototype built from `index.html`, `styles.css`, `script.js`, and local assets with no build step.
 - The UI flow still runs through five `.app-screen` sections and delegated `data-action` interactions in `script.js`.
 - The current `script.js` in this workspace still shows earlier second-pass state gaps. Before content polish starts, confirm the second-pass baseline is already present in the working tree or restore it first.
-- The `verify.js` harness referenced in earlier notes is assumed to exist externally. Do not describe it as repo-local unless it is restored here first.
+- The repo now includes `verify.js` as the second-pass baseline harness. Use it as the starting verification target before extending it for the presentation-polish pass.
 - Start execution by reading `COPILOT_THIRD_PASS.md`, `COPILOT_SECOND_PASS.md`, `HANDOFF.md`, `index.html`, `script.js`, and `styles.css`.
 
 ## Locked Constraints
@@ -30,7 +30,7 @@ This is a content-and-realism pass, not a redesign or architecture pass.
 
 - Verify the second-pass state fixes are present before starting polish.
 - Confirm challenge progress does not advance on join, partner selection is stored consistently, keyboard navigation cannot bypass required state, and the toast behavior matches the second-pass expectations.
-- Confirm the external harness baseline is still `55/55` before adding new checks.
+- Confirm `verify.js` still passes its baseline `55/55` checks before adding new checks.
 
 ### 2. Activity Detail Realism
 
@@ -79,9 +79,9 @@ This is a content-and-realism pass, not a redesign or architecture pass.
 
 ## Verification
 
-- Confirm every file named in this handoff exists locally, except the external `verify.js` harness which should be labeled as external until restored.
+- Confirm every file named in this handoff exists locally, including `verify.js`.
 - Confirm the second-pass baseline or equivalent state fixes are present before content polish assertions begin.
-- Confirm the external harness still passes its baseline `55/55` checks, then extend it to roughly `60-65` focused checks for the new realism content.
+- Confirm `verify.js` still passes its baseline `55/55` checks, then extend it to roughly `60-65` focused checks for the new realism content.
 - Add checks for the runner note, heart-rate or effort detail, distinct partner bios, feed expansion, visible social proof, removal of placeholder-facing copy, and timestamp differentiation.
 - Re-run manual walkthroughs for both Maya and Samir paths to make sure the polish pass does not regress state coherence.
 
@@ -92,8 +92,8 @@ This is a content-and-realism pass, not a redesign or architecture pass.
 - The feed and activity detail carry realistic social and activity context.
 - No visible placeholder or developer-note copy remains in the main UI.
 - The second-pass behavior remains intact.
-- The external harness baseline is preserved and the extended polish checks pass.
+- The `verify.js` baseline is preserved and the extended polish checks pass.
 
 ## Prompt To Paste Into Copilot
 
-> Read `COPILOT_THIRD_PASS.md`, `COPILOT_SECOND_PASS.md`, `HANDOFF.md`, `index.html`, `script.js`, and `styles.css` before editing. Work from the current static prototype in this repo, but first confirm the second-pass baseline state fixes are already present or restore them before doing presentation polish. Treat `verify.js` and the `55/55` baseline as an external harness unless that file has been restored locally. Then implement the third pass as a compact realism-and-content polish: improve activity-detail realism, make Maya and Samir feel like distinct real partners, expand the feed with believable social proof, tighten challenge copy, replace stub club posts, clean up toast voice, and make timestamps and small numbers coherent. Preserve the five `.app-screen` flow, delegated `data-action` interaction model, dependency-free setup, and activity-first hierarchy. When finished, verify both partner paths manually and extend the external harness from `55/55` to roughly `60-65` focused checks without regressing second-pass behavior.
+> Read `COPILOT_THIRD_PASS.md`, `COPILOT_SECOND_PASS.md`, `HANDOFF.md`, `index.html`, `script.js`, `styles.css`, and `verify.js` before editing. Work from the current static prototype in this repo, but first confirm the second-pass baseline state fixes are already present by running `verify.js` and restoring anything it catches before doing presentation polish. Then implement the third pass as a compact realism-and-content polish: improve activity-detail realism, make Maya and Samir feel like distinct real partners, expand the feed with believable social proof, tighten challenge copy, replace stub club posts, clean up toast voice, and make timestamps and small numbers coherent. Preserve the five `.app-screen` flow, delegated `data-action` interaction model, dependency-free setup, and activity-first hierarchy. When finished, verify both partner paths manually and extend `verify.js` from `55/55` to roughly `60-65` focused checks without regressing second-pass behavior.
