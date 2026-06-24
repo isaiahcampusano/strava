@@ -13,7 +13,14 @@ const pairButton = document.querySelector('[data-action="pair-with-partner"]');
 const partnerName = document.querySelector('.partner-section .partner-name');
 const partnerNameInline = document.querySelector('.partner-section .partner-name-inline');
 const partnerMeta = document.querySelector('.partner-section .partner-meta');
-const partnerAvatar = document.querySelector('.partner-row .avatar');
+const partnerPhoto = document.querySelector('.partner-section .partner-photo');
+const partnerBio = document.querySelector('.partner-section .partner-bio');
+const partnerRecent = document.querySelector('.partner-section .partner-recent');
+const matchSummary = document.querySelector('.partner-section .match-summary');
+const partnerPlan = document.querySelector('.partner-section .partner-plan');
+const pairingStatus = document.querySelector('[data-pairing-status]');
+const pairingStatusTitle = document.querySelector('.pairing-status-title');
+const pairingStatusCopy = document.querySelector('.pairing-status-copy');
 const alternateButton = document.querySelector('.partner-section .text-button');
 const matchReasonLabels = [...document.querySelectorAll(".match-reasons li span")];
 const feedProgressTitle = document.querySelector(".progress-title");
@@ -34,32 +41,43 @@ const PARTNERS = {
     firstName: "Maya",
     shortName: "Maya L.",
     initials: "ML",
-    meta: "Usually runs Tue / Thu",
+    meta: "Runs with North Quad · 18 club activities",
+    bio: "Architecture senior building toward her first half marathon.",
+    recent: "Yesterday · Easy 4.6 mi at 8:51 /mi",
+    matchSummary: "Maya matches your pace, Tuesday and Thursday availability, and preferred campus route.",
     reasons: [
-      "8:40-9:00 /mi pace",
-      "Same Tuesday and Thursday availability",
-      "Often runs the North Quad loop",
+      "Your easy paces are within 10 sec /mi",
+      "Both free Tuesday and Thursday evenings",
+      "Both regularly run the North Quad loop",
     ],
-    avatarClass: "avatar avatar-maya",
+    plan: "Thu, 6:15 PM · North Quad loop · Easy 5 mi",
+    acceptedPlan: "Thursday at 6:15 PM · North Quad loop",
+    photoClass: "partner-photo avatar-maya",
   },
   samir: {
     key: "samir",
     firstName: "Samir",
     shortName: "Samir P.",
     initials: "SP",
-    meta: "Usually runs Mon / Wed",
+    meta: "Runs with North Quad · 24 club activities",
+    bio: "Engineering grad student who keeps campus miles social and steady.",
+    recent: "Monday · Steady 5.2 mi at 8:58 /mi",
+    matchSummary: "Samir is close to your pace, shares your Wednesday window, and trains on familiar campus routes.",
     reasons: [
-      "8:40-9:05 /mi pace",
-      "Similar early evening availability",
-      "Often runs the campus perimeter",
+      "Your easy paces are within 15 sec /mi",
+      "Both free Wednesday after 5:30 PM",
+      "Both train on the campus perimeter",
     ],
-    avatarClass: "avatar avatar-samir",
+    plan: "Wed, 5:45 PM · Campus perimeter · Steady 5 mi",
+    acceptedPlan: "Wednesday at 5:45 PM · Campus perimeter",
+    photoClass: "partner-photo avatar-samir",
   },
 };
 
 const initialState = {
   joined: false,
   selectedPartner: null,
+  pairingAccepted: false,
   challengeComplete: false,
   following: false,
   kudos: false,
@@ -119,6 +137,11 @@ function updateChallengeUI() {
     copy = `You and ${partner.firstName} completed 2 of 2 shared runs. North Quad Run Club is now 68% complete this week.`;
     buttonLabel = "Challenge complete";
     stateName = "complete";
+  } else if (state.pairingAccepted) {
+    const partner = getSelectedPartner();
+    copy = `You're paired with ${partner.firstName}. Progress stays at 61% until both shared runs are uploaded.`;
+    buttonLabel = "Pairing confirmed";
+    stateName = "paired";
   } else if (state.joined) {
     copy = "You're in. Choose a clubmate to start the challenge.";
     buttonLabel = "Choose a clubmate";
@@ -142,12 +165,26 @@ function updatePartnerUI() {
   partnerName.textContent = partner.shortName;
   partnerNameInline.textContent = partner.shortName;
   partnerMeta.textContent = partner.meta;
-  partnerAvatar.className = partner.avatarClass;
-  partnerAvatar.textContent = partner.initials;
-  pairButton.textContent = `Pair with ${partner.firstName}`;
-  pairButton.setAttribute("aria-label", `Pair with ${partner.shortName}`);
+  partnerBio.textContent = partner.bio;
+  partnerRecent.textContent = partner.recent;
+  matchSummary.textContent = partner.matchSummary;
+  partnerPlan.textContent = partner.plan;
+  partnerPhoto.className = partner.photoClass;
+  partnerPhoto.setAttribute("aria-label", `${partner.shortName} profile photo`);
+  pairingStatus.hidden = !state.pairingAccepted;
+  pairingStatusTitle.textContent = `${partner.firstName} accepted`;
+  pairingStatusCopy.textContent = partner.acceptedPlan;
+  pairButton.textContent = state.pairingAccepted ? "See shared run result" : `Send invite to ${partner.firstName}`;
+  pairButton.setAttribute(
+    "aria-label",
+    state.pairingAccepted
+      ? `See shared run result with ${partner.shortName}`
+      : `Send pairing invite to ${partner.shortName}`
+  );
+  pairButton.classList.toggle("is-accepted", state.pairingAccepted);
   alternateButton.textContent = state.showingAlternate ? "Show suggested partner" : "See other clubmates";
   alternateButton.setAttribute("aria-pressed", String(state.showingAlternate));
+  alternateButton.hidden = state.pairingAccepted;
 
   matchReasonLabels.forEach((label, index) => {
     label.textContent = partner.reasons[index];
@@ -264,9 +301,15 @@ function handleAction(trigger) {
   }
 
   if (action === "pair-with-partner") {
-    const partner = getSuggestedPartner();
-    state.joined = true;
-    state.selectedPartner = partner.key;
+    if (!state.pairingAccepted) {
+      const partner = getSuggestedPartner();
+      state.joined = true;
+      state.selectedPartner = partner.key;
+      state.pairingAccepted = true;
+      render();
+      return true;
+    }
+
     state.challengeComplete = true;
     render();
     showScreen(trigger.dataset.next);
@@ -274,6 +317,7 @@ function handleAction(trigger) {
   }
 
   if (action === "toggle-alternate") {
+    if (state.pairingAccepted) return true;
     state.showingAlternate = !state.showingAlternate;
     render();
     return true;

@@ -103,9 +103,24 @@ assert(
   document.querySelector(".partner-name").textContent.trim() === "Maya L."
 );
 assert(
-  "start: pair CTA defaults to 'Pair with Maya'",
-  document.querySelector('[data-action="pair-with-partner"]').textContent.trim() === "Pair with Maya",
+  "start: pair CTA defaults to 'Send invite to Maya'",
+  document.querySelector('[data-action="pair-with-partner"]').textContent.trim() === "Send invite to Maya",
   `actual="${document.querySelector('[data-action="pair-with-partner"]').textContent}"`
+);
+assert(
+  "start: North Quad is visually marked as the featured club",
+  document.querySelector('[data-action="open-club"]').classList.contains("featured-club") &&
+    document.querySelector('[data-action="open-club"] .club-open-label').textContent.trim() === "Open"
+);
+assert(
+  "start: suggested partner uses a profile photo rather than initials",
+  !!document.querySelector(".partner-photo[role='img']") &&
+    document.querySelector(".partner-photo").textContent.trim() === ""
+);
+assert(
+  "start: best-match explanation is present",
+  /pace/i.test(document.querySelector(".match-summary").textContent) &&
+    /availability/i.test(document.querySelector(".match-summary").textContent)
 );
 
 clickByAction("open-club");
@@ -134,6 +149,25 @@ assert(
   "Maya path: joined CTA reads 'Joined' or 'Choose a clubmate' (not 'Join challenge')",
   /^(Joined|Choose a clubmate)$/.test(joinedCta),
   `actual="${joinedCta}"`
+);
+
+clickByAction("pair-with-partner");
+assert("Maya path: invite acceptance stays on Challenge screen", activeScreen().dataset.screen === "2");
+assert("Maya path: invite acceptance stores Maya", window.state.selectedPartner === "maya");
+assert("Maya path: invite acceptance does not complete challenge", window.state.pairingAccepted && !window.state.challengeComplete);
+assert(
+  "Maya path: progress remains 61% after acceptance",
+  document.querySelector('.weekly-challenge .progress-value b').textContent.trim() === "61%"
+);
+assert(
+  "Maya path: acceptance state names Maya and shows the plan",
+  !document.querySelector("[data-pairing-status]").hidden &&
+    /Maya accepted/.test(document.querySelector(".pairing-status-title").textContent) &&
+    /Thursday/.test(document.querySelector(".pairing-status-copy").textContent)
+);
+assert(
+  "Maya path: accepted CTA separates coordination from completion",
+  document.querySelector('[data-action="pair-with-partner"]').textContent.trim() === "See shared run result"
 );
 
 clickByAction("pair-with-partner");
@@ -235,7 +269,12 @@ assert(
 );
 fireKey("ArrowRight");
 assert(
-  "KB: ArrowRight from Challenge advances through pair action (since joined)",
+  "KB: first ArrowRight from Challenge accepts pairing without completing",
+  activeScreen().dataset.screen === "2" && window.state.pairingAccepted && !window.state.challengeComplete
+);
+fireKey("ArrowRight");
+assert(
+  "KB: second ArrowRight from Challenge advances to completed feed",
   activeScreen().dataset.screen === "3"
 );
 
@@ -244,13 +283,15 @@ clickByAction("open-club");
 clickByAction("join-challenge");
 fireKey("ArrowRight");
 assert(
-  "KB: ArrowRight from Challenge with no partner selected auto-pairs Maya",
-  activeScreen().dataset.screen === "3"
+  "KB: ArrowRight from Challenge with no partner selected invites Maya first",
+  activeScreen().dataset.screen === "2" && window.state.pairingAccepted
 );
 assert(
-  "KB: partner auto-selected is Maya (no Samir default)",
-  document.querySelector(".partner-name").textContent.trim() === "Maya L."
+  "KB: invited partner is Maya (no Samir default)",
+  window.state.selectedPartner === "maya" && document.querySelector(".partner-name").textContent.trim() === "Maya L."
 );
+fireKey("ArrowRight");
+assert("KB: accepted Maya path advances on the next ArrowRight", activeScreen().dataset.screen === "3");
 
 restart();
 clickByAction("open-club");
@@ -261,14 +302,22 @@ assert(
   document.querySelector(".partner-name").textContent.trim() === "Samir P."
 );
 assert(
-  "Samir path: pair CTA now reads 'Pair with Samir'",
-  document.querySelector('[data-action="pair-with-partner"]').textContent.trim() === "Pair with Samir"
+  "Samir path: pair CTA now reads 'Send invite to Samir'",
+  document.querySelector('[data-action="pair-with-partner"]').textContent.trim() === "Send invite to Samir"
 );
 assert(
   "Samir path: alternate button aria-pressed is true",
   document.querySelector('[data-action="toggle-alternate"]').getAttribute("aria-pressed") === "true"
 );
 
+clickByAction("pair-with-partner");
+assert("Samir path: acceptance stays on Challenge screen", activeScreen().dataset.screen === "2");
+assert(
+  "Samir path: acceptance names Samir and does not complete progress",
+  /Samir accepted/.test(document.querySelector(".pairing-status-title").textContent) &&
+    window.state.selectedPartner === "samir" &&
+    !window.state.challengeComplete
+);
 clickByAction("pair-with-partner");
 assert("Samir path: Club activity feed after pairing", activeScreen().dataset.screen === "3");
 const samirFeedCopy = document.querySelector(".progress-copy").textContent;

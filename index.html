@@ -57,17 +57,18 @@
             <button type="button" data-action="select-tab" data-tab="active" aria-pressed="false">Active</button><button type="button" data-action="select-tab" data-tab="challenges" aria-pressed="false">Challenges</button><button class="active" type="button" data-action="select-tab" data-tab="clubs" aria-pressed="true">Clubs</button>
           </nav>
           <div class="screen-scroll club-list-scroll">
-            <div class="create-club"><span>Create your own Strava club</span><button type="button" data-action="toast" data-toast="Not included in this prototype">Create a Club</button></div>
+            <div class="create-club"><span>Club tools</span><button type="button" data-action="toast" data-toast="Not included in this prototype">Create a club</button></div>
 
-            <button class="club-row" type="button" data-action="open-club" data-next="1" aria-label="Open North Quad Run Club">
+            <button class="club-row featured-club" type="button" data-action="open-club" data-next="1" aria-label="Open North Quad Run Club">
               <span class="club-mark north-quad"><svg><use href="#i-run"/></svg><b>NQ</b></span>
               <span class="club-copy">
+                <span class="club-eyebrow">Your club</span>
                 <strong>North Quad Run Club</strong>
                 <span><svg><use href="#i-run"/></svg> 186 Members</span>
                 <span>Campus community &middot; 3 posts</span>
                 <em>Weekly challenge &middot; 12 members paired</em>
               </span>
-              <svg class="row-chevron"><use href="#i-chevron"/></svg>
+              <span class="club-open-label">Open</span>
             </button>
 
             <div class="club-row">
@@ -162,19 +163,32 @@
             </section>
             <section class="partner-section">
               <div class="section-heading"><div><span>Suggested partner</span><h3 class="partner-name">Maya L.</h3></div><span class="match-pill">Best match</span></div>
-              <div class="partner-row">
-                <span class="avatar avatar-maya">ML</span>
-                <div><strong class="partner-name-inline">Maya L.</strong><span class="partner-meta">Usually runs Tue / Thu</span></div>
+              <article class="partner-card">
+                <div class="partner-row">
+                  <span class="partner-photo avatar-maya" role="img" aria-label="Maya L. profile photo"></span>
+                  <div class="partner-profile-copy">
+                    <strong class="partner-name-inline">Maya L.</strong>
+                    <span class="partner-meta">Runs with North Quad &middot; 18 club activities</span>
+                    <p class="partner-bio">Architecture senior building toward her first half marathon.</p>
+                  </div>
+                </div>
+                <div class="recent-activity"><span>Recent club run</span><strong class="partner-recent">Yesterday &middot; Easy 4.6 mi at 8:51 /mi</strong></div>
+                <div class="match-explanation"><strong>Why this is your best match</strong><span class="match-summary">Maya matches your pace, Tuesday and Thursday availability, and preferred campus route.</span></div>
+                <ul class="match-reasons">
+                  <li><svg><use href="#i-run"/></svg><span>Your easy paces are within 10 sec /mi</span></li>
+                  <li><svg><use href="#i-calendar"/></svg><span>Both free Tuesday and Thursday evenings</span></li>
+                  <li><svg><use href="#i-map"/></svg><span>Both regularly run the North Quad loop</span></li>
+                </ul>
+                <div class="coordination-plan"><svg><use href="#i-calendar"/></svg><div><span>Suggested first run</span><strong class="partner-plan">Thu, 6:15 PM &middot; North Quad loop &middot; Easy 5 mi</strong></div></div>
+              </article>
+              <div class="pairing-status" data-pairing-status hidden>
+                <span class="check-circle"><svg><use href="#i-check"/></svg></span>
+                <div><strong class="pairing-status-title">Maya accepted</strong><span class="pairing-status-copy">Thursday at 6:15 PM &middot; North Quad loop</span></div>
               </div>
-              <ul class="match-reasons">
-                <li><svg><use href="#i-run"/></svg><span>8:40&ndash;9:00 /mi pace</span></li>
-                <li><svg><use href="#i-calendar"/></svg><span>Same Tuesday and Thursday availability</span></li>
-                <li><svg><use href="#i-map"/></svg><span>Often runs the North Quad loop</span></li>
-              </ul>
-              <button class="primary-button" type="button" data-action="pair-with-partner" data-next="3">Pair with Maya</button>
+              <button class="primary-button" type="button" data-action="pair-with-partner" data-next="3">Send invite to Maya</button>
               <button class="text-button" type="button" data-action="toggle-alternate" aria-pressed="false">See other clubmates</button>
             </section>
-            <section class="how-it-works"><h3>How it works</h3><p>Your runs can be recorded together or matched after both activities are uploaded.</p></section>
+            <section class="how-it-works"><h3>How it works</h3><p>Choose a clubmate and agree on a run. Progress updates after both shared activities are uploaded.</p></section>
           </div>
           <nav class="bottom-nav" aria-label="Primary navigation">
             <button type="button" data-action="toast" data-toast="Not included in this prototype"><svg><use href="#i-home"/></svg><span>Home</span><b class="nav-count">11</b></button>
