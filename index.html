@@ -54,7 +54,7 @@
             </div>
           </div>
           <nav class="group-tabs" aria-label="Group sections">
-            <button type="button" data-action="toast" data-toast="Not included in this prototype">Active</button><button type="button" data-action="toast" data-toast="Not included in this prototype">Challenges</button><button class="active" type="button" data-action="toast" data-toast="Not included in this prototype">Clubs</button>
+            <button type="button" data-action="select-tab" data-tab="active" aria-pressed="false">Active</button><button type="button" data-action="select-tab" data-tab="challenges" aria-pressed="false">Challenges</button><button class="active" type="button" data-action="select-tab" data-tab="clubs" aria-pressed="true">Clubs</button>
           </nav>
           <div class="screen-scroll club-list-scroll">
             <div class="create-club"><span>Create your own Strava club</span><button type="button" data-action="toast" data-toast="Not included in this prototype">Create a Club</button></div>
@@ -171,7 +171,7 @@
                 <li><svg><use href="#i-calendar"/></svg><span>Same Tuesday and Thursday availability</span></li>
                 <li><svg><use href="#i-map"/></svg><span>Often runs the North Quad loop</span></li>
               </ul>
-              <button class="primary-button" type="button" data-action="pair-with-maya" data-next="3">Pair with Maya</button>
+              <button class="primary-button" type="button" data-action="pair-with-partner" data-next="3">Pair with Maya</button>
               <button class="text-button" type="button" data-action="toggle-alternate" aria-pressed="false">See other clubmates</button>
             </section>
             <section class="how-it-works"><h3>How it works</h3><p>Your runs can be recorded together or matched after both activities are uploaded.</p></section>
@@ -192,6 +192,7 @@
             <h1>Club Activity Feed</h1><span></span>
           </div>
           <div class="screen-scroll activity-feed-scroll">
+            <div class="time-marker" data-time-marker>Later this week</div>
             <div class="progress-update"><span class="check-circle"><svg><use href="#i-check"/></svg></span><div><strong class="progress-title">Shared run progress</strong><span class="progress-copy">Complete both runs to add to this week's club progress.</span></div></div>
             <article class="feed-activity">
               <div class="athlete-row"><span class="avatar avatar-ellen">EP</span><div><strong>Ellen Powell</strong><span>Today &middot; Garmin Forerunner 265S</span><span class="location-line"><svg><use href="#i-run"/></svg> North Quad campus loop</span></div></div>
@@ -216,7 +217,7 @@
         </section>
 
         <section class="app-screen" data-screen="4" data-screen-name="Activity" aria-hidden="true">
-          <header class="status-bar map-status"><span>3:07</span><span class="status-icons">LTE 100%</span></header>
+          <header class="status-bar map-status"><span>3:08</span><span class="status-icons">LTE 100%</span></header>
           <div class="activity-map">
             <span class="map-label detail-one">North Quad</span><span class="map-label detail-two">Library Walk</span><span class="map-label detail-three">College Avenue</span>
             <svg class="route-line detail-route" viewBox="0 0 390 300" aria-hidden="true"><path d="M90 55 122 83 116 128 179 143 205 117 246 160 304 151 323 197 291 245"/><circle cx="90" cy="55" r="6"/><circle class="finish" cx="291" cy="245" r="7"/></svg>
@@ -235,7 +236,7 @@
               </div>
               <section class="activity-challenge">
                 <span class="check-circle"><svg><use href="#i-check"/></svg></span>
-                <div><strong>Weekly challenge complete</strong><span>Ellen and Maya completed 2 of 2 shared runs. North Quad Run Club is now 68% complete.</span></div>
+                <div><strong>Weekly challenge complete</strong><span data-partner-detail>Ellen and Maya completed 2 of 2 shared runs. North Quad Run Club is now 68% complete.</span></div>
               </section>
               <div class="gear-list">
                 <div><svg><use href="#i-shoe"/></svg><span>ASICS Superblast</span></div>
@@ -246,6 +247,7 @@
             </article>
           </div>
         </section>
+        <div class="prototype-toast" role="status" aria-live="polite" aria-atomic="true"></div>
       </div>
     </section>
 
@@ -254,8 +256,6 @@
       <button class="restart-button" type="button">Restart prototype</button>
     </div>
   </main>
-
-  <div class="prototype-toast" role="status" aria-live="polite" aria-atomic="true"></div>
   <script src="script.js"></script>
 </body>
 </html>

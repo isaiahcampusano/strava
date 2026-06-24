@@ -671,6 +671,10 @@ button.club-row:active {
   background: #256d41;
 }
 
+.primary-button.is-complete {
+  background: #256d41;
+}
+
 .composer {
   display: grid;
   min-height: 62px;
@@ -818,6 +822,15 @@ button.club-row:active {
   color: #ddd;
   font-size: 12px;
   line-height: 1.35;
+}
+
+.time-marker {
+  padding: 14px 18px 4px;
+  color: #9a9a9a;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .check-circle {
@@ -1431,11 +1444,12 @@ button.club-row:active {
 }
 
 .prototype-toast {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
+  position: absolute;
+  left: 50%;
+  right: auto;
+  bottom: 84px;
   z-index: 30;
-  max-width: min(280px, calc(100vw - 24px));
+  max-width: calc(100% - 24px);
   padding: 10px 12px;
   border-radius: 999px;
   background: rgba(16, 16, 16, 0.95);
@@ -1443,14 +1457,14 @@ button.club-row:active {
   font-size: 12px;
   font-weight: 700;
   opacity: 0;
-  transform: translateY(6px);
+  transform: translate(-50%, 6px);
   pointer-events: none;
   transition: opacity 180ms ease, transform 180ms ease;
 }
 
 .prototype-toast.is-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, 0);
 }
 
 .circle-button.is-saved {

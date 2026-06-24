@@ -16,4 +16,6 @@ Use the on-screen actions or the left/right arrow keys to move through the flow.
 - `assets/` - local prototype imagery
 - `HANDOFF.md` - product and implementation direction
 - `COPILOT_HANDOFF.md` - next-pass interaction and incentive requirements
+- `COPILOT_SECOND_PASS.md` - prior-state fix brief and historical context
+- `COPILOT_THIRD_PASS.md` - current source-of-truth handoff for the presentation-polish pass
 - `walkthrough-script.md` - short demo talk track

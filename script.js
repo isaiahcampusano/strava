@@ -2,115 +2,208 @@ const screens = [...document.querySelectorAll(".app-screen")];
 const indicatorLabel = document.querySelector(".indicator-label");
 const indicatorDots = [...document.querySelectorAll(".indicator-dots i")];
 const toast = document.querySelector(".prototype-toast");
+const groupTabs = [...document.querySelectorAll('.group-tabs button[data-action="select-tab"]')];
+const weeklyChallenge = document.querySelector(".weekly-challenge");
 const challengeButton = document.querySelector('.weekly-challenge .primary-button');
+const challengeCopy = document.querySelector('.weekly-challenge .challenge-copy');
 const challengeProgressValue = document.querySelector('.weekly-challenge .progress-value b');
 const challengeProgressTrack = document.querySelector('.weekly-challenge .progress-track span');
-const challengeCopy = document.querySelector('.weekly-challenge .challenge-copy');
-const feedProgressTitle = document.querySelector('.progress-update .progress-title');
-const feedProgressCopy = document.querySelector('.progress-update .progress-copy');
-const feedKudosCount = document.querySelector('.kudos-line .kudos-count');
+const progressValue = challengeProgressValue.closest(".progress-value");
+const pairButton = document.querySelector('[data-action="pair-with-partner"]');
 const partnerName = document.querySelector('.partner-section .partner-name');
 const partnerNameInline = document.querySelector('.partner-section .partner-name-inline');
 const partnerMeta = document.querySelector('.partner-section .partner-meta');
+const partnerAvatar = document.querySelector('.partner-row .avatar');
 const alternateButton = document.querySelector('.partner-section .text-button');
+const matchReasonLabels = [...document.querySelectorAll(".match-reasons li span")];
+const feedProgressTitle = document.querySelector(".progress-title");
+const feedProgressCopy = document.querySelector(".progress-copy");
+const challengeContextCopy = document.querySelector(".challenge-context-copy");
+const feedKudosCount = document.querySelector(".kudos-count");
+const avatarStack = [...document.querySelectorAll(".avatar-stack i")];
 const followButton = document.querySelector('.activity-owner > button');
-const saveRouteButton = document.querySelector('.map-actions .circle-button');
-const kudosButton = document.querySelector('.feed-actions button[data-action="toggle-feed-kudos"]');
+const saveRouteButton = document.querySelector('[data-action="toggle-save-route"]');
+const feedKudosButton = document.querySelector('.feed-actions button[data-action="toggle-feed-kudos"]');
 const bothKudosButton = document.querySelector('.club-social-actions button[data-action="toggle-both-kudos"]');
-const progressButton = document.querySelector('.club-social-actions button[data-action="view-club-progress"]');
+const activityPartnerDetail = document.querySelector("[data-partner-detail]");
+const restartButton = document.querySelector(".restart-button");
 
-let currentScreen = 0;
-const state = {
+const PARTNERS = {
+  maya: {
+    key: "maya",
+    firstName: "Maya",
+    shortName: "Maya L.",
+    initials: "ML",
+    meta: "Usually runs Tue / Thu",
+    reasons: [
+      "8:40-9:00 /mi pace",
+      "Same Tuesday and Thursday availability",
+      "Often runs the North Quad loop",
+    ],
+    avatarClass: "avatar avatar-maya",
+  },
+  samir: {
+    key: "samir",
+    firstName: "Samir",
+    shortName: "Samir P.",
+    initials: "SP",
+    meta: "Usually runs Mon / Wed",
+    reasons: [
+      "8:40-9:05 /mi pace",
+      "Similar early evening availability",
+      "Often runs the campus perimeter",
+    ],
+    avatarClass: "avatar avatar-samir",
+  },
+};
+
+const initialState = {
   joined: false,
-  partner: false,
+  selectedPartner: null,
   challengeComplete: false,
   following: false,
   kudos: false,
   routeSaved: false,
-  alternatePartner: false,
+  showingAlternate: false,
+  activeTab: "clubs",
 };
+
+let currentScreen = 0;
+const state = { ...initialState };
+window.state = state;
+
+function getSuggestedPartnerKey() {
+  return state.showingAlternate ? "samir" : "maya";
+}
+
+function getSuggestedPartner() {
+  return PARTNERS[getSuggestedPartnerKey()];
+}
+
+function getSelectedPartner() {
+  return PARTNERS[state.selectedPartner || "maya"];
+}
+
+function resetToast() {
+  toast.textContent = "";
+  toast.classList.remove("is-visible");
+  window.clearTimeout(showToast.timeoutId);
+}
 
 function showToast(message) {
   toast.textContent = message;
-  toast.classList.add('is-visible');
+  toast.classList.add("is-visible");
   window.clearTimeout(showToast.timeoutId);
-  showToast.timeoutId = window.setTimeout(() => toast.classList.remove('is-visible'), 1600);
+  showToast.timeoutId = window.setTimeout(() => {
+    toast.classList.remove("is-visible");
+  }, 1600);
+}
+
+function updateTabsUI() {
+  groupTabs.forEach((button) => {
+    const isActive = button.dataset.tab === state.activeTab;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
 }
 
 function updateChallengeUI() {
-  const joined = state.joined;
-  const complete = state.challengeComplete || state.partner;
-  challengeButton.textContent = joined ? 'Joined challenge' : 'Join challenge';
-  challengeButton.classList.toggle('is-joined', joined);
-  challengeButton.setAttribute('aria-pressed', String(joined));
-  challengeCopy.textContent = joined
-    ? 'You committed to a shared run with Maya and can help move the club forward this week.'
-    : 'Complete two runs with the same clubmate by Sunday. Each shared run adds to the club\'s weekly progress.';
-  challengeProgressValue.textContent = joined ? '68%' : '61%';
-  challengeProgressTrack.style.width = joined ? '68%' : '61%';
-  if (joined) {
-    challengeProgressValue.closest('.progress-value').setAttribute('data-state', 'joined');
-  } else {
-    challengeProgressValue.closest('.progress-value').removeAttribute('data-state');
+  let progress = "61%";
+  let copy = "Complete two runs with the same clubmate by Sunday. Each shared run adds to the club's weekly progress.";
+  let buttonLabel = "Join challenge";
+  let stateName = "not-joined";
+
+  if (state.challengeComplete) {
+    const partner = getSelectedPartner();
+    progress = "68%";
+    copy = `You and ${partner.firstName} completed 2 of 2 shared runs. North Quad Run Club is now 68% complete this week.`;
+    buttonLabel = "Challenge complete";
+    stateName = "complete";
+  } else if (state.joined) {
+    copy = "You're in. Choose a clubmate to start the challenge.";
+    buttonLabel = "Choose a clubmate";
+    stateName = "joined";
   }
-  if (complete) {
-    feedProgressTitle.textContent = 'Shared run progress';
-    feedProgressCopy.textContent = 'Ellen and Maya completed 2 of 2 shared runs. North Quad Run Club is now 68% complete.';
-  } else {
-    feedProgressTitle.textContent = 'Shared run progress';
-    feedProgressCopy.textContent = 'Complete both runs to add to this week\'s club progress.';
-  }
+
+  weeklyChallenge.dataset.challengeState = stateName;
+  challengeButton.textContent = buttonLabel;
+  challengeButton.classList.toggle("is-joined", state.joined && !state.challengeComplete);
+  challengeButton.classList.toggle("is-complete", state.challengeComplete);
+  challengeButton.setAttribute("aria-pressed", String(state.joined || state.challengeComplete));
+  challengeCopy.textContent = copy;
+  challengeProgressValue.textContent = progress;
+  challengeProgressTrack.style.width = progress;
+  progressValue.dataset.state = stateName;
 }
 
 function updatePartnerUI() {
-  const showAlternate = state.alternatePartner;
-  partnerName.textContent = showAlternate ? 'Samir P.' : 'Maya L.';
-  partnerNameInline.textContent = showAlternate ? 'Samir P.' : 'Maya L.';
-  partnerMeta.textContent = showAlternate ? 'Usually runs Mon / Wed' : 'Usually runs Tue / Thu';
-  alternateButton.textContent = showAlternate ? 'Show suggested partner' : 'See other clubmates';
-  alternateButton.setAttribute('aria-pressed', String(showAlternate));
-  const reasons = document.querySelector('.match-reasons');
-  if (reasons) {
-    const items = reasons.querySelectorAll('li');
-    if (showAlternate) {
-      items[0].querySelector('span').textContent = '8:40–9:05 /mi pace';
-      items[1].querySelector('span').textContent = 'Similar early evening availability';
-      items[2].querySelector('span').textContent = 'Often runs the campus perimeter';
-    } else {
-      items[0].querySelector('span').textContent = '8:40–9:00 /mi pace';
-      items[1].querySelector('span').textContent = 'Same Tuesday and Thursday availability';
-      items[2].querySelector('span').textContent = 'Often runs the North Quad loop';
-    }
-  }
+  const partner = getSuggestedPartner();
+
+  partnerName.textContent = partner.shortName;
+  partnerNameInline.textContent = partner.shortName;
+  partnerMeta.textContent = partner.meta;
+  partnerAvatar.className = partner.avatarClass;
+  partnerAvatar.textContent = partner.initials;
+  pairButton.textContent = `Pair with ${partner.firstName}`;
+  pairButton.setAttribute("aria-label", `Pair with ${partner.shortName}`);
+  alternateButton.textContent = state.showingAlternate ? "Show suggested partner" : "See other clubmates";
+  alternateButton.setAttribute("aria-pressed", String(state.showingAlternate));
+
+  matchReasonLabels.forEach((label, index) => {
+    label.textContent = partner.reasons[index];
+  });
 }
 
-function updateStateUI() {
+function updateFeedUI() {
+  const partner = getSelectedPartner();
+
+  feedProgressTitle.textContent = "Shared run progress";
+  feedProgressCopy.textContent = state.challengeComplete
+    ? `Ellen and ${partner.firstName} completed 2 of 2 shared runs. North Quad Run Club is now 68% complete.`
+    : "Complete both runs to add to this week's club progress.";
+  challengeContextCopy.textContent = state.challengeComplete
+    ? `This shared run with ${partner.firstName} counts toward the weekly challenge.`
+    : "Shared runs add to this week's club progress.";
+
+  if (avatarStack[1]) {
+    avatarStack[1].textContent = state.challengeComplete ? partner.initials : PARTNERS.maya.initials;
+  }
+
+  const kudosCount = state.kudos ? 9 : 8;
+  const kudosLabel = state.kudos
+    ? `Kudos sent to Ellen and ${partner.firstName}`
+    : `Give kudos to Ellen and ${partner.firstName}`;
+
+  feedKudosCount.textContent = `${kudosCount} gave kudos`;
+  feedKudosButton.setAttribute("aria-label", kudosLabel);
+  feedKudosButton.setAttribute("aria-pressed", String(state.kudos));
+  feedKudosButton.classList.toggle("is-active", state.kudos);
+  bothKudosButton.setAttribute("aria-pressed", String(state.kudos));
+  bothKudosButton.classList.toggle("is-active", state.kudos);
+  bothKudosButton.querySelector("span").textContent = state.kudos ? "Kudos sent" : "Give kudos to both";
+}
+
+function updateActivityUI() {
+  const partner = getSelectedPartner();
+
+  activityPartnerDetail.textContent = `Ellen and ${partner.firstName} completed 2 of 2 shared runs. North Quad Run Club is now 68% complete.`;
+  followButton.textContent = state.following ? "Following" : "Follow";
+  followButton.classList.toggle("is-following", state.following);
+  followButton.setAttribute("aria-pressed", String(state.following));
+
+  const saveLabel = state.routeSaved ? "Route saved" : "Save route";
+  saveRouteButton.setAttribute("aria-label", saveLabel);
+  saveRouteButton.setAttribute("aria-pressed", String(state.routeSaved));
+  saveRouteButton.classList.toggle("is-saved", state.routeSaved);
+  saveRouteButton.querySelector("svg").setAttribute("data-saved", String(state.routeSaved));
+}
+
+function render() {
+  updateTabsUI();
   updateChallengeUI();
   updatePartnerUI();
-  const followLabel = state.following ? 'Following' : 'Follow';
-  followButton.textContent = followLabel;
-  followButton.classList.toggle('is-following', state.following);
-  followButton.setAttribute('aria-pressed', String(state.following));
-  const saveLabel = state.routeSaved ? 'Route saved' : 'Save route';
-  saveRouteButton.setAttribute('aria-label', saveLabel);
-  saveRouteButton.setAttribute('aria-pressed', String(state.routeSaved));
-  saveRouteButton.classList.toggle('is-saved', state.routeSaved);
-  saveRouteButton.querySelector('svg').setAttribute('data-saved', String(state.routeSaved));
-  const kudosLabel = state.kudos ? 'Kudos sent' : 'Give kudos';
-  if (kudosButton) {
-    kudosButton.setAttribute('aria-label', kudosLabel);
-    kudosButton.setAttribute('aria-pressed', String(state.kudos));
-    kudosButton.classList.toggle('is-active', state.kudos);
-  }
-  const bothKudosLabel = state.kudos ? 'Kudos sent' : 'Give kudos to both';
-  if (bothKudosButton) {
-    bothKudosButton.setAttribute('aria-pressed', String(state.kudos));
-    bothKudosButton.classList.toggle('is-active', state.kudos);
-    bothKudosButton.querySelector('span').textContent = bothKudosLabel;
-  }
-  if (feedKudosCount) {
-    feedKudosCount.textContent = state.kudos ? '9 gave kudos' : '8 gave kudos';
-  }
+  updateFeedUI();
+  updateActivityUI();
 }
 
 function showScreen(index) {
@@ -130,104 +223,136 @@ function showScreen(index) {
     }
   });
 
-  indicatorDots.forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === currentScreen));
+  indicatorDots.forEach((dot, dotIndex) => {
+    dot.classList.toggle("active", dotIndex === currentScreen);
+  });
 }
 
-function handleAction(button) {
-  const action = button.dataset.action;
+function resetState() {
+  Object.assign(state, initialState);
+  render();
+  showScreen(0);
+  resetToast();
+}
+
+function handleAction(trigger) {
+  const action = trigger.dataset.action;
   if (!action) return false;
 
-  if (action === 'toast') {
-    showToast(button.dataset.toast || 'Not included in this prototype');
+  if (action === "toast") {
+    showToast(trigger.dataset.toast || "This feature is not part of the prototype.");
     return true;
   }
 
-  if (action === 'open-club') {
-    showScreen(button.dataset.next);
+  if (action === "select-tab") {
+    state.activeTab = trigger.dataset.tab || "clubs";
+    render();
     return true;
   }
 
-  if (action === 'join-challenge') {
+  if (action === "open-club") {
+    state.activeTab = "clubs";
+    showScreen(trigger.dataset.next);
+    return true;
+  }
+
+  if (action === "join-challenge") {
     state.joined = true;
-    state.challengeComplete = false;
-    updateStateUI();
-    showScreen(button.dataset.next);
+    render();
+    showScreen(trigger.dataset.next);
     return true;
   }
 
-  if (action === 'pair-with-maya') {
-    state.partner = true;
+  if (action === "pair-with-partner") {
+    const partner = getSuggestedPartner();
+    state.joined = true;
+    state.selectedPartner = partner.key;
     state.challengeComplete = true;
-    updateStateUI();
-    showScreen(button.dataset.next);
+    render();
+    showScreen(trigger.dataset.next);
     return true;
   }
 
-  if (action === 'toggle-alternate') {
-    state.alternatePartner = !state.alternatePartner;
-    updatePartnerUI();
+  if (action === "toggle-alternate") {
+    state.showingAlternate = !state.showingAlternate;
+    render();
     return true;
   }
 
-  if (action === 'toggle-follow') {
+  if (action === "toggle-follow") {
     state.following = !state.following;
-    updateStateUI();
+    render();
     return true;
   }
 
-  if (action === 'toggle-feed-kudos') {
+  if (action === "toggle-feed-kudos" || action === "toggle-both-kudos") {
     state.kudos = !state.kudos;
-    updateStateUI();
+    render();
     return true;
   }
 
-  if (action === 'toggle-both-kudos') {
-    state.kudos = !state.kudos;
-    updateStateUI();
-    return true;
-  }
-
-  if (action === 'toggle-save-route') {
+  if (action === "toggle-save-route") {
     state.routeSaved = !state.routeSaved;
-    updateStateUI();
+    render();
     return true;
   }
 
-  if (action === 'view-club-progress') {
-    showScreen(button.dataset.next);
+  if (action === "view-club-progress") {
+    showScreen(trigger.dataset.next);
     return true;
   }
 
   return false;
 }
 
-document.addEventListener('click', (event) => {
-  const trigger = event.target.closest('[data-next], [data-action]');
+function routeForwardKey() {
+  if (currentScreen === 0) {
+    handleAction(document.querySelector('[data-action="open-club"]'));
+    return;
+  }
+
+  if (currentScreen === 1) {
+    handleAction(challengeButton);
+    return;
+  }
+
+  if (currentScreen === 2) {
+    handleAction(pairButton);
+    return;
+  }
+
+  if (currentScreen === 3) {
+    showScreen(4);
+  }
+}
+
+document.addEventListener("click", (event) => {
+  const trigger = event.target.closest("[data-next], [data-action]");
   if (!trigger) return;
+
   if (trigger.dataset.next && !trigger.dataset.action) {
     showScreen(trigger.dataset.next);
     return;
   }
+
   handleAction(trigger);
 });
 
-document.querySelector('.restart-button').addEventListener('click', () => {
-  state.joined = false;
-  state.partner = false;
-  state.challengeComplete = false;
-  state.following = false;
-  state.kudos = false;
-  state.routeSaved = false;
-  state.alternatePartner = false;
-  updateStateUI();
-  showScreen(0);
+restartButton.addEventListener("click", resetState);
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowRight") {
+    routeForwardKey();
+  }
+
+  if (event.key === "ArrowLeft" && currentScreen > 0) {
+    showScreen(currentScreen - 1);
+  }
+
+  if (event.key === "Home") {
+    resetState();
+  }
 });
 
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'ArrowRight' && currentScreen < screens.length - 1) showScreen(currentScreen + 1);
-  if (event.key === 'ArrowLeft' && currentScreen > 0) showScreen(currentScreen - 1);
-  if (event.key === 'Home') showScreen(0);
-});
-
-updateStateUI();
+render();
 showScreen(0);
